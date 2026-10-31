@@ -60,8 +60,42 @@ export type PosterAspectRatio =
   | 'editorial-4x5' // 4:5
   | 'vertical-9x16'; // 9:16
 
+export type ContainerFillMode = 'none' | 'palette-solid' | 'gradient';
+
+export type GradientDirection =
+  | 'to-bottom'
+  | 'to-right'
+  | 'to-bottom-right'
+  | 'to-top-right'
+  | 'radial';
+
+export type PaletteDistribution =
+  | 'random'
+  | 'sequential'
+  | 'coordinate-x'
+  | 'coordinate-y'
+  | 'size-based';
+
+export type BrutalistShadowStyle = 'brutalist-hard' | 'deep-drop' | 'win95-bevel' | 'flat-razor';
+
+export interface ContainerColorConfig {
+  fillMode: ContainerFillMode;
+  schemeId: string;
+  gradientDirection: GradientDirection;
+  gradientStopOffset: number; // 0 - 100%
+  paletteDistribution: PaletteDistribution;
+  opacity: number; // 0.1 - 1.0
+  invertScheme?: boolean;
+  seedOffset?: number;
+  containerShadowStyle?: BrutalistShadowStyle;
+}
+
 export interface BoxCustomStyle {
   isNegativeVoid?: boolean; // When true, rendered as empty architectural breathing room
+  fillColor?: string; // Optional per-box solid color override
+  gradientColor1?: string; // Optional per-box gradient start override
+  gradientColor2?: string; // Optional per-box gradient end override
+  gradientAngle?: number; // Optional per-box gradient angle override
   customLabel?: string;
   customHeadline?: string;
   customSubtitle?: string;
@@ -86,6 +120,7 @@ export interface PosterConfig {
   showGridLines?: boolean;
   gridBorderWidth?: number;
   typeInformationLevel?: 'minimal' | 'standard' | 'full';
+  colorConfig?: ContainerColorConfig;
 }
 
 export interface GridBlock {

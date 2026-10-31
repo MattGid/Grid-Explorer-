@@ -11,6 +11,7 @@ import {
   GridConfig,
   PosterConfig,
 } from '../types/grid';
+import { resolveContainerFill } from '../utils/containerColorResolver';
 
 interface PosterCanvasProps {
   blocks: GridBlock[];
@@ -270,6 +271,26 @@ export const PosterCanvas: React.FC<PosterCanvasProps> = ({
                   );
                 }
 
+                const resolvedFill = resolveContainerFill(
+                  block,
+                  config,
+                  posterConfig.colorConfig,
+                  custom,
+                  'canvas-grad'
+                );
+
+                const shadowStyle = posterConfig.colorConfig?.containerShadowStyle || 'brutalist-hard';
+                let containerBoxShadow: string | undefined = undefined;
+                if (shadowStyle === 'brutalist-hard') {
+                  containerBoxShadow = '3px 3px 0px #000000';
+                } else if (shadowStyle === 'deep-drop') {
+                  containerBoxShadow = '6px 6px 0px #000000';
+                } else if (shadowStyle === 'win95-bevel') {
+                  containerBoxShadow = 'inset 1.5px 1.5px 0 rgba(255,255,255,0.7), inset -1.5px -1.5px 0 rgba(0,0,0,0.6)';
+                } else if (shadowStyle === 'flat-razor') {
+                  containerBoxShadow = undefined;
+                }
+
                 return (
                   <div
                     key={block.id}
@@ -311,14 +332,12 @@ export const PosterCanvas: React.FC<PosterCanvasProps> = ({
                       gridColumn: `${block.col + 1} / span ${block.colSpan}`,
                       gridRow: `${block.row + 1} / span ${block.rowSpan}`,
                       borderRadius: `${borderRadius}px`,
-                      backgroundColor: isSelected ? '#EFEFEF' : '#F8F8F8',
+                      background: resolvedFill.background,
+                      opacity: posterConfig.colorConfig?.opacity ?? 1.0,
                       borderColor,
                       borderWidth: `${effectiveBorderWidth}px`,
                       borderStyle: 'solid',
-                      boxShadow:
-                        effectiveBorderWidth > 0
-                          ? 'inset 1px 1px 0 #ffffff, inset -1px -1px 0 #c0c0c0'
-                          : undefined,
+                      boxShadow: containerBoxShadow,
                     }}
                     className={`relative overflow-hidden cursor-pointer ${
                       isSelected

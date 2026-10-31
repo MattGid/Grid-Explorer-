@@ -5,7 +5,7 @@
 
 import { toPng, toCanvas } from 'html-to-image';
 import { BoxCustomStyle, GridBlock, GridConfig, PosterConfig } from '../types/grid';
-import { generateSVG } from './codeGenerators';
+import { generateSVG, PrintExportOptions } from './codeGenerators';
 
 export interface PngExportOptions {
   pixelRatio?: number;
@@ -19,6 +19,21 @@ export interface WebpExportOptions {
   quality?: number; // 0.1 to 1.0 (default 0.92)
   backgroundColor?: string;
   onProgress?: (status: string) => void;
+}
+
+/**
+ * Triggers browser download of an SVG file.
+ */
+export function downloadSvgFile(svgContent: string, filename: string): void {
+  const blob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.download = filename.endsWith('.svg') ? filename : `${filename}.svg`;
+  link.href = url;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 }
 
 /**

@@ -223,3 +223,19 @@ input[type="range"]::-moz-range-thumb {
     inset -2px -2px 0 #808080,
     inset 2px 2px 0 #dfdfdf;
 }
+
+/* ========================================================================= */
+/* PRINT MEDIA QUERY FOR SYSTEM PRINT DIALOG                                 */
+/* ========================================================================= */
+@media print {
+  @page {
+    size: auto;
+    margin: 0mm;
+  }
+  body, html, #root {
+    background: #ffffff !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+}
+

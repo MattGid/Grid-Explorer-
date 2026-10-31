@@ -18,6 +18,7 @@ import { Header, ExportFormatTab } from './components/Header';
 import { PosterCanvas } from './components/PosterCanvas';
 import { CreationPanel } from './components/CreationPanel';
 import { ExportModal } from './components/ExportModal';
+import { DEFAULT_COLOR_CONFIG } from './utils/containerColorResolver';
 
 const ALL_ALGORITHMS: LayoutAlgorithmType[] = [
   'bsp',
@@ -65,6 +66,7 @@ const INITIAL_POSTER_CONFIG: PosterConfig = {
   showBoxMetadata: false,
   showAllTypography: false,
   typeInformationLevel: 'minimal',
+  colorConfig: DEFAULT_COLOR_CONFIG,
 };
 
 export function App() {
@@ -321,6 +323,14 @@ export function App() {
         } else {
           handleUndo();
         }
+      } else if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'p') {
+        e.preventDefault();
+        setExportInitialTab('print');
+        setExportOpen(true);
+      } else if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'e') {
+        e.preventDefault();
+        setExportInitialTab('css');
+        setExportOpen(true);
       } else if (e.code === 'Space') {
         setIsSpacePressed(true);
       }

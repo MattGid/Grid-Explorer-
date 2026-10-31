@@ -7,26 +7,37 @@ import React, { useState } from 'react';
 import {
   AlgorithmicStep,
   BoxCustomStyle,
+  BrutalistShadowStyle,
+  ContainerColorConfig,
+  ContainerFillMode,
   FocalLocus,
+  GradientDirection,
   GridBlock,
   GridConfig,
   GridStats,
   LayoutAlgorithmType,
   PackingBias,
+  PaletteDistribution,
   PosterAspectRatio,
   PosterConfig,
   SymmetryMode,
   VariationSnapshot,
 } from '../types/grid';
 import { ALL_SPAN_OPTIONS, GRID_PRESETS } from '../data/presets';
+import { COLOR_SCHEMES, getColorScheme } from '../data/colorSchemes';
+import { DEFAULT_COLOR_CONFIG } from '../utils/containerColorResolver';
 import {
   Shuffle,
   Sparkles,
   EyeOff,
   Code2,
+  Palette,
+  Paintbrush,
+  RotateCcw,
 } from 'lucide-react';
+import { ExportFormatTab } from './Header';
 
-export type GridWorkbenchTab = 'algorithms' | 'parameters';
+export type GridWorkbenchTab = 'algorithms' | 'parameters' | 'colours';
 
 interface CreationPanelProps {
   config: GridConfig;
@@ -50,7 +61,7 @@ interface CreationPanelProps {
   onSaveVariation: () => void;
   onLoadVariation: (v: VariationSnapshot) => void;
   onDeleteVariation: (id: string) => void;
-  onOpenExport: (tab?: 'css' | 'tailwind' | 'svg' | 'png' | 'webp' | 'json') => void;
+  onOpenExport: (tab?: ExportFormatTab) => void;
   theme?: 'light' | 'dark';
 }
 
@@ -227,6 +238,19 @@ export const CreationPanel: React.FC<CreationPanelProps> = ({
   onOpenExport,
 }) => {
   const [activeTab, setActiveTab] = useState<GridWorkbenchTab>('algorithms');
+  const [schemeCategoryFilter, setSchemeCategoryFilter] = useState<'all' | 'retro-os' | 'brutalism'>('all');
+
+  const colorConfig: ContainerColorConfig = posterConfig.colorConfig || DEFAULT_COLOR_CONFIG;
+  const currentScheme = getColorScheme(colorConfig.schemeId);
+
+  const handleUpdateColorConfig = (partial: Partial<ContainerColorConfig>) => {
+    onUpdatePosterConfig({
+      colorConfig: {
+        ...colorConfig,
+        ...partial,
+      },
+    });
+  };
 
   const handleToggleSpan = (span: string) => {
     const exists = config.allowedSpans.includes(span);
@@ -239,11 +263,11 @@ export const CreationPanel: React.FC<CreationPanelProps> = ({
 
   return (
     <aside className="w-[330px] sm:w-[355px] shrink-0 h-full bg-[#c0c0c0] text-black p-1.5 flex flex-col select-none">
-      {/* Classic Windows 95 Property Sheet Tabs */}
-      <div className="flex items-end px-0.5 shrink-0">
+      {/* Classic Windows 95 Property Sheet 3 Tabs */}
+      <div className="flex items-end px-0.5 shrink-0 flex-wrap">
         <button
           onClick={() => setActiveTab('algorithms')}
-          className={`px-3 py-1 text-[11px] font-bold win95-tab ${
+          className={`px-2.5 py-1 text-[11px] font-bold win95-tab ${
             activeTab === 'algorithms' ? 'win95-tab-active' : 'text-[#222222]'
           }`}
         >
@@ -251,11 +275,19 @@ export const CreationPanel: React.FC<CreationPanelProps> = ({
         </button>
         <button
           onClick={() => setActiveTab('parameters')}
-          className={`px-3 py-1 text-[11px] font-bold win95-tab ${
+          className={`px-2.5 py-1 text-[11px] font-bold win95-tab ${
             activeTab === 'parameters' ? 'win95-tab-active' : 'text-[#222222]'
           }`}
         >
           Parameters
+        </button>
+        <button
+          onClick={() => setActiveTab('colours')}
+          className={`px-2.5 py-1 text-[11px] font-bold win95-tab ${
+            activeTab === 'colours' ? 'win95-tab-active' : 'text-[#222222]'
+          }`}
+        >
+          Colour & Fill
         </button>
       </div>
 
@@ -270,7 +302,7 @@ export const CreationPanel: React.FC<CreationPanelProps> = ({
 
             <div className="flex items-center justify-between text-[11px]">
               <span>
-                Origin: Col {selectedBlock.col + 1}, Row {selectedBlock.row + 1}
+                Col {selectedBlock.col + 1}, Row {selectedBlock.row + 1}
               </span>
               <button
                 onClick={() => onSelectBlock(null)}
@@ -346,6 +378,9 @@ export const CreationPanel: React.FC<CreationPanelProps> = ({
 
         {/* Scrollable Property Sheet Area */}
         <div className="flex-1 overflow-y-auto pr-1 space-y-2.5">
+          {/* ============================================================= */}
+          {/* TAB 1: ALGORITHMS                                             */}
+          {/* ============================================================= */}
           {activeTab === 'algorithms' && (
             <>
               {/* Random Seed & Mutate */}
@@ -500,7 +535,7 @@ export const CreationPanel: React.FC<CreationPanelProps> = ({
                 </div>
               </fieldset>
 
-              {/* Curated Grid Presets Listbox */}
+              {/* System Presets */}
               <fieldset className="win95-groupbox p-2 space-y-1">
                 <legend className="font-bold">System Presets</legend>
                 <div className="win95-inset p-1 max-h-44 overflow-y-auto space-y-0.5">
@@ -531,6 +566,9 @@ export const CreationPanel: React.FC<CreationPanelProps> = ({
             </>
           )}
 
+          {/* ============================================================= */}
+          {/* TAB 2: PARAMETERS                                             */}
+          {/* ============================================================= */}
           {activeTab === 'parameters' && (
             <>
               {/* Spacing, Radius, Border & Void */}
@@ -798,16 +836,344 @@ export const CreationPanel: React.FC<CreationPanelProps> = ({
                   <span>Show Container Diagonal Crosshairs</span>
                 </label>
               </fieldset>
-
-              <button
-                onClick={() => onOpenExport('css')}
-                className="win95-btn w-full py-1.5 px-3 text-[11px] font-bold flex items-center justify-center gap-1.5"
-              >
-                <Code2 className="w-3.5 h-3.5 text-[#000080]" />
-                <span>Export Layout Specification...</span>
-              </button>
             </>
           )}
+
+          {/* ============================================================= */}
+          {/* TAB 3: COLOUR & FILL                                          */}
+          {/* ============================================================= */}
+          {activeTab === 'colours' && (
+            <>
+              {/* Fill Mode Switcher */}
+              <fieldset className="win95-groupbox p-2 space-y-2">
+                <legend className="font-bold">Container Fill Mode</legend>
+                <div className="grid grid-cols-3 gap-1">
+                  {(
+                    [
+                      { id: 'palette-solid', label: 'Solid Palette' },
+                      { id: 'gradient', label: 'Gradients' },
+                      { id: 'none', label: 'Wireframe' },
+                    ] as { id: ContainerFillMode; label: string }[]
+                  ).map((mode) => (
+                    <button
+                      key={mode.id}
+                      onClick={() => handleUpdateColorConfig({ fillMode: mode.id })}
+                      className={`py-1.5 px-1 text-[10px] font-bold ${
+                        colorConfig.fillMode === mode.id ? 'win95-btn-latched' : 'win95-btn'
+                      }`}
+                    >
+                      {mode.label}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-[10px] text-[#555555] leading-tight">
+                  {colorConfig.fillMode === 'gradient'
+                    ? 'Dual-stop gradients rendered strictly within each container.'
+                    : colorConfig.fillMode === 'palette-solid'
+                    ? 'Individual solid colors distributed across containers from the active scheme.'
+                    : 'Clean transparent wireframe with structural outer borders.'}
+                </p>
+              </fieldset>
+
+              {/* Curated Retro OS & Brutalism Colour Schemes */}
+              <fieldset className="win95-groupbox p-2 space-y-2">
+                <div className="flex items-center justify-between">
+                  <legend className="font-bold">Retro OS & Brutalist Palettes</legend>
+                  <button
+                    onClick={() =>
+                      handleUpdateColorConfig({
+                        seedOffset: (colorConfig.seedOffset || 0) + 1,
+                      })
+                    }
+                    className="win95-btn px-2 py-0.5 text-[10px] flex items-center gap-1"
+                    title="Re-randomize colors among containers"
+                  >
+                    <Shuffle className="w-3 h-3 text-[#000080]" />
+                    <span>Shuffle</span>
+                  </button>
+                </div>
+
+                {/* Filter Tabs: All, Retro OS, Brutalism */}
+                <div className="flex gap-1 pb-0.5">
+                  {(
+                    [
+                      { id: 'all', label: `All (${COLOR_SCHEMES.length})` },
+                      { id: 'retro-os', label: 'Retro OS & HW' },
+                      { id: 'brutalism', label: 'Digital Brutalism' },
+                    ] as { id: 'all' | 'retro-os' | 'brutalism'; label: string }[]
+                  ).map((f) => (
+                    <button
+                      key={f.id}
+                      onClick={() => setSchemeCategoryFilter(f.id)}
+                      className={`flex-1 py-0.5 text-[9px] font-bold ${
+                        schemeCategoryFilter === f.id ? 'win95-btn-latched' : 'win95-btn'
+                      }`}
+                    >
+                      {f.label}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="win95-inset p-1 max-h-56 overflow-y-auto space-y-1">
+                  {COLOR_SCHEMES.filter(
+                    (s) =>
+                      schemeCategoryFilter === 'all' || s.category === schemeCategoryFilter
+                  ).map((scheme) => {
+                    const isSelected = colorConfig.schemeId === scheme.id;
+                    return (
+                      <button
+                        key={scheme.id}
+                        onClick={() => handleUpdateColorConfig({ schemeId: scheme.id })}
+                        className={`w-full p-1.5 text-left text-[11px] rounded transition-none ${
+                          isSelected
+                            ? 'bg-[#000080] text-white font-bold'
+                            : 'hover:bg-[#dfdfdf] text-black'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between gap-1 mb-0.5">
+                          <span className="truncate">{scheme.name}</span>
+                          <span className="text-[9px] font-mono-code opacity-75 shrink-0">
+                            {scheme.colors.length}c
+                          </span>
+                        </div>
+                        {scheme.hardwareEra && (
+                          <div className={`text-[9px] font-mono-code mb-1 truncate ${
+                            isSelected ? 'text-[#a3c2ff]' : 'text-[#666666]'
+                          }`}>
+                            {scheme.hardwareEra}
+                          </div>
+                        )}
+                        {/* Live Color Swatch Ribbon */}
+                        <div className="flex h-3 w-full border border-black/40 overflow-hidden">
+                          {scheme.colors.map((c, cIdx) => (
+                            <span
+                              key={cIdx}
+                              style={{ backgroundColor: c }}
+                              className="flex-1 h-full"
+                            />
+                          ))}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <label className="flex items-center gap-2 pt-1 cursor-pointer text-[11px]">
+                  <input
+                    type="checkbox"
+                    checked={Boolean(colorConfig.invertScheme)}
+                    onChange={(e) => handleUpdateColorConfig({ invertScheme: e.target.checked })}
+                    className="w-3.5 h-3.5 accent-[#000080]"
+                  />
+                  <span>Invert Palette Spectrum Order</span>
+                </label>
+              </fieldset>
+
+              {/* Digital Brutalism & Container Styling */}
+              <fieldset className="win95-groupbox p-2 space-y-2">
+                <legend className="font-bold">Digital Brutalism Styling</legend>
+                <div>
+                  <div className="text-[11px] mb-1">Container Shadow & Edge:</div>
+                  <div className="grid grid-cols-2 gap-1">
+                    {(
+                      [
+                        { id: 'brutalist-hard', label: 'Hard Shadow (3px)' },
+                        { id: 'deep-drop', label: 'Deep Block (6px)' },
+                        { id: 'win95-bevel', label: 'Win95 3D Bevel' },
+                        { id: 'flat-razor', label: 'Flat Plane (0px)' },
+                      ] as { id: BrutalistShadowStyle; label: string }[]
+                    ).map((style) => (
+                      <button
+                        key={style.id}
+                        onClick={() => handleUpdateColorConfig({ containerShadowStyle: style.id })}
+                        className={`py-1 text-[10px] ${
+                          (colorConfig.containerShadowStyle || 'brutalist-hard') === style.id
+                            ? 'win95-btn-latched'
+                            : 'win95-btn'
+                        }`}
+                      >
+                        {style.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex justify-between text-[11px] mb-0.5">
+                    <span>Brutalist Border Weight:</span>
+                    <span className="font-mono-code font-bold">
+                      {posterConfig.gridBorderWidth ?? 1.5}px
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min={0.5}
+                    max={6}
+                    step={0.5}
+                    value={posterConfig.gridBorderWidth ?? 1.5}
+                    onChange={(e) =>
+                      onUpdatePosterConfig({ gridBorderWidth: parseFloat(e.target.value) })
+                    }
+                    className="w-full"
+                  />
+                </div>
+              </fieldset>
+
+              {/* Palette Distribution Strategy */}
+              <fieldset className="win95-groupbox p-2 space-y-1.5">
+                <legend className="font-bold">Palette Distribution</legend>
+                <div className="grid grid-cols-2 gap-1">
+                  {(
+                    [
+                      { id: 'random', label: 'Random (PRNG)' },
+                      { id: 'sequential', label: 'Sequential Order' },
+                      { id: 'coordinate-x', label: 'Left → Right Flow' },
+                      { id: 'coordinate-y', label: 'Top → Down Flow' },
+                      { id: 'size-based', label: 'Cell Area / Scale' },
+                    ] as { id: PaletteDistribution; label: string }[]
+                  ).map((dist) => (
+                    <button
+                      key={dist.id}
+                      onClick={() => handleUpdateColorConfig({ paletteDistribution: dist.id })}
+                      className={`py-1 text-[10px] ${
+                        colorConfig.paletteDistribution === dist.id
+                          ? 'win95-btn-latched'
+                          : 'win95-btn'
+                      }`}
+                    >
+                      {dist.label}
+                    </button>
+                  ))}
+                </div>
+              </fieldset>
+
+              {/* Gradient Controls (Only Within Containers) */}
+              <fieldset className="win95-groupbox p-2 space-y-2">
+                <legend className="font-bold">Gradient Controls (Within Containers)</legend>
+
+                <div>
+                  <div className="text-[11px] mb-1">Gradient Vector:</div>
+                  <div className="grid grid-cols-3 gap-1">
+                    {(
+                      [
+                        { id: 'to-bottom-right', label: '↘ 135°' },
+                        { id: 'to-bottom', label: '↓ 180°' },
+                        { id: 'to-right', label: '→ 90°' },
+                        { id: 'to-top-right', label: '↗ 45°' },
+                        { id: 'radial', label: '⦿ Radial' },
+                      ] as { id: GradientDirection; label: string }[]
+                    ).map((dir) => (
+                      <button
+                        key={dir.id}
+                        onClick={() => handleUpdateColorConfig({ gradientDirection: dir.id })}
+                        className={`py-1 text-[10px] font-mono-code ${
+                          colorConfig.gradientDirection === dir.id
+                            ? 'win95-btn-latched'
+                            : 'win95-btn'
+                        }`}
+                      >
+                        {dir.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex justify-between text-[11px] mb-0.5">
+                    <span>Gradient Stop Position:</span>
+                    <span className="font-mono-code font-bold">
+                      {colorConfig.gradientStopOffset ?? 100}%
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min={20}
+                    max={100}
+                    step={5}
+                    value={colorConfig.gradientStopOffset ?? 100}
+                    onChange={(e) =>
+                      handleUpdateColorConfig({ gradientStopOffset: parseInt(e.target.value, 10) })
+                    }
+                    className="w-full"
+                  />
+                </div>
+
+                <div>
+                  <div className="flex justify-between text-[11px] mb-0.5">
+                    <span>Fill Opacity:</span>
+                    <span className="font-mono-code font-bold">
+                      {Math.round((colorConfig.opacity ?? 1.0) * 100)}%
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min={0.2}
+                    max={1.0}
+                    step={0.05}
+                    value={colorConfig.opacity ?? 1.0}
+                    onChange={(e) =>
+                      handleUpdateColorConfig({ opacity: parseFloat(e.target.value) })
+                    }
+                    className="w-full"
+                  />
+                </div>
+              </fieldset>
+
+              {/* Selected Cell Paint Swatches */}
+              {selectedBlock && (
+                <fieldset className="win95-groupbox p-2 space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <legend className="font-bold">Paint Selected Cell</legend>
+                    <button
+                      onClick={() =>
+                        onUpdateBoxStyle(selectedBlock.id, {
+                          fillColor: undefined,
+                          gradientColor1: undefined,
+                          gradientColor2: undefined,
+                        })
+                      }
+                      className="win95-btn px-1.5 py-0.5 text-[9px] flex items-center gap-0.5"
+                      title="Reset to default scheme"
+                    >
+                      <RotateCcw className="w-2.5 h-2.5" />
+                      <span>Reset</span>
+                    </button>
+                  </div>
+                  <div className="text-[10px] text-[#404040]">
+                    Click a swatch to apply color override:
+                  </div>
+                  <div className="grid grid-cols-7 gap-1">
+                    {currentScheme.colors.map((c, i) => (
+                      <button
+                        key={i}
+                        onClick={() => onUpdateBoxStyle(selectedBlock.id, { fillColor: c })}
+                        style={{ backgroundColor: c }}
+                        className="w-6 h-6 border border-black shadow-sm win95-outset hover:scale-105"
+                        title={c}
+                      />
+                    ))}
+                  </div>
+                </fieldset>
+              )}
+            </>
+          )}
+        </div>
+
+        {/* Bottom Export Command Button */}
+        <div className="pt-2 shrink-0 border-t border-[#808080] mt-1 flex gap-1">
+          <button
+            onClick={() => onOpenExport('print')}
+            className="win95-btn flex-1 py-1.5 px-2 text-[11px] font-bold flex items-center justify-center gap-1 text-[#000080]"
+          >
+            <span>Print Sheet...</span>
+          </button>
+          <button
+            onClick={() => onOpenExport('css')}
+            className="win95-btn flex-1 py-1.5 px-2 text-[11px] font-bold flex items-center justify-center gap-1"
+          >
+            <Code2 className="w-3.5 h-3.5" />
+            <span>Export...</span>
+          </button>
         </div>
       </div>
     </aside>

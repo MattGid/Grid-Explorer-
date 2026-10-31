@@ -6,7 +6,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { GridConfig, GridStats, LayoutAlgorithmType } from '../types/grid';
 
-export type ExportFormatTab = 'png' | 'webp' | 'svg' | 'css' | 'tailwind' | 'json';
+export type ExportFormatTab = 'png' | 'webp' | 'svg' | 'css' | 'tailwind' | 'json' | 'print';
 
 interface HeaderProps {
   config: GridConfig;
@@ -179,6 +179,16 @@ export const Header: React.FC<HeaderProps> = ({
                 <span className="opacity-70">F3</span>
               </button>
               <div className="my-1 border-t border-[#808080] border-b border-white" />
+              <button
+                onClick={() => {
+                  setOpenMenu(null);
+                  onOpenExport('print');
+                }}
+                className="w-full px-4 py-1 text-left flex justify-between hover:bg-[#000080] hover:text-white font-bold"
+              >
+                <span>Large Scale Print...</span>
+                <span className="opacity-70">Ctrl+P</span>
+              </button>
               <button
                 onClick={() => {
                   setOpenMenu(null);
@@ -355,7 +365,17 @@ export const Header: React.FC<HeaderProps> = ({
             E<u>x</u>port
           </button>
           {openMenu === 'export' && (
-            <div className="win95-outset absolute left-0 top-full w-52 py-1 z-50 text-black">
+            <div className="win95-outset absolute left-0 top-full w-56 py-1 z-50 text-black">
+              <button
+                onClick={() => {
+                  setOpenMenu(null);
+                  onOpenExport('print');
+                }}
+                className="w-full px-4 py-1 text-left hover:bg-[#000080] hover:text-white font-bold"
+              >
+                Large Scale Print (A0-A3 / 24x36)
+              </button>
+              <div className="my-1 border-t border-[#808080] border-b border-white" />
               <button
                 onClick={() => {
                   setOpenMenu(null);
@@ -461,6 +481,12 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => onOpenExport('print')}
+            className="win95-btn px-2.5 py-1 text-[11px] font-bold flex items-center gap-1 text-[#000080]"
+          >
+            <span>Print...</span>
+          </button>
           <button
             onClick={() => onOpenExport('css')}
             className="win95-btn px-3 py-1 text-[11px] font-bold"

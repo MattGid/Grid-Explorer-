@@ -1,0 +1,225 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    font-family: 'Tahoma', 'MS Sans Serif', 'Segoe UI', Geneva, Verdana, sans-serif;
+    font-size: 12px;
+    color: #000000;
+    background-color: #008080;
+  }
+}
+
+.font-mono-code {
+  font-family: 'Courier New', 'JetBrains Mono', Courier, monospace;
+}
+
+/* ========================================================================= */
+/* WINDOWS 95 3D BEVELS, SURFACES & CONTROLS                                 */
+/* ========================================================================= */
+
+.win95-window {
+  background-color: #c0c0c0;
+  box-shadow:
+    inset -1px -1px 0 #000000,
+    inset 1px 1px 0 #dfdfdf,
+    inset -2px -2px 0 #808080,
+    inset 2px 2px 0 #ffffff;
+}
+
+.win95-outset {
+  background-color: #c0c0c0;
+  box-shadow:
+    inset -1px -1px 0 #000000,
+    inset 1px 1px 0 #ffffff,
+    inset -2px -2px 0 #808080,
+    inset 2px 2px 0 #dfdfdf;
+}
+
+.win95-inset {
+  background-color: #ffffff;
+  box-shadow:
+    inset -1px -1px 0 #ffffff,
+    inset 1px 1px 0 #808080,
+    inset -2px -2px 0 #dfdfdf,
+    inset 2px 2px 0 #000000;
+}
+
+.win95-inset-gray {
+  background-color: #c0c0c0;
+  box-shadow:
+    inset -1px -1px 0 #ffffff,
+    inset 1px 1px 0 #808080,
+    inset -2px -2px 0 #dfdfdf,
+    inset 2px 2px 0 #000000;
+}
+
+.win95-status-pane {
+  background-color: #c0c0c0;
+  box-shadow:
+    inset -1px -1px 0 #ffffff,
+    inset 1px 1px 0 #808080;
+}
+
+.win95-titlebar {
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #ffffff;
+}
+
+.win95-btn {
+  background-color: #c0c0c0;
+  color: #000000;
+  box-shadow:
+    inset -1px -1px 0 #000000,
+    inset 1px 1px 0 #ffffff,
+    inset -2px -2px 0 #808080,
+    inset 2px 2px 0 #dfdfdf;
+  user-select: none;
+}
+
+.win95-btn:active:not(:disabled),
+.win95-btn-pressed {
+  background-color: #c0c0c0;
+  box-shadow:
+    inset 1px 1px 0 #000000,
+    inset -1px -1px 0 #ffffff,
+    inset 2px 2px 0 #808080,
+    inset -2px -2px 0 #dfdfdf;
+  padding-top: 1px;
+  padding-left: 1px;
+}
+
+.win95-btn-latched {
+  background-color: #dfdfdf;
+  background-image: linear-gradient(45deg, #c0c0c0 25%, transparent 25%),
+    linear-gradient(-45deg, #c0c0c0 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #c0c0c0 75%),
+    linear-gradient(-45deg, transparent 75%, #c0c0c0 75%);
+  background-size: 2px 2px;
+  background-position: 0 0, 0 1px, 1px -1px, -1px 0;
+  box-shadow:
+    inset 1px 1px 0 #000000,
+    inset -1px -1px 0 #ffffff,
+    inset 2px 2px 0 #808080,
+    inset -2px -2px 0 #dfdfdf;
+  font-weight: 700;
+}
+
+.win95-btn:disabled {
+  color: #808080;
+  text-shadow: 1px 1px 0 #ffffff;
+  cursor: default;
+}
+
+/* Etched GroupBox (<fieldset>) */
+.win95-groupbox {
+  border: 1px solid #808080;
+  box-shadow:
+    inset 1px 1px 0 #ffffff,
+    1px 1px 0 #ffffff;
+  padding: 8px 10px 10px 10px;
+  margin-top: 4px;
+}
+
+.win95-groupbox > legend {
+  padding: 0 4px;
+  margin-left: 4px;
+  font-size: 11px;
+  color: #000000;
+  background-color: #c0c0c0;
+}
+
+/* Classic Windows 95 Property Sheet Tabs */
+.win95-tab {
+  background-color: #c0c0c0;
+  box-shadow:
+    inset 1px 1px 0 #ffffff,
+    inset 2px 2px 0 #dfdfdf,
+    inset -1px 0 0 #000000,
+    inset -2px 0 0 #808080;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  position: relative;
+}
+
+.win95-tab-active {
+  background-color: #c0c0c0;
+  box-shadow:
+    inset 1px 1px 0 #ffffff,
+    inset 2px 2px 0 #dfdfdf,
+    inset -1px 0 0 #000000,
+    inset -2px 0 0 #808080;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  z-index: 10;
+  margin-bottom: -2px;
+  padding-bottom: 6px;
+}
+
+/* Windows 95 Trackbar (Range Slider) */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: #ffffff;
+  height: 6px;
+  border-radius: 0;
+  outline: none;
+  box-shadow:
+    inset -1px -1px 0 #ffffff,
+    inset 1px 1px 0 #808080,
+    inset -2px -2px 0 #dfdfdf,
+    inset 2px 2px 0 #000000;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 11px;
+  height: 19px;
+  border-radius: 0;
+  background: #c0c0c0;
+  box-shadow:
+    inset -1px -1px 0 #000000,
+    inset 1px 1px 0 #ffffff,
+    inset -2px -2px 0 #808080,
+    inset 2px 2px 0 #dfdfdf;
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 11px;
+  height: 19px;
+  border-radius: 0;
+  border: none;
+  background: #c0c0c0;
+  box-shadow:
+    inset -1px -1px 0 #000000,
+    inset 1px 1px 0 #ffffff,
+    inset -2px -2px 0 #808080,
+    inset 2px 2px 0 #dfdfdf;
+  cursor: pointer;
+}
+
+/* Windows 95 Scrollbars */
+::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #dfdfdf;
+  background-image: linear-gradient(45deg, #c0c0c0 25%, transparent 25%),
+    linear-gradient(-45deg, #c0c0c0 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #c0c0c0 75%),
+    linear-gradient(-45deg, transparent 75%, #c0c0c0 75%);
+  background-size: 2px 2px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #c0c0c0;
+  box-shadow:
+    inset -1px -1px 0 #000000,
+    inset 1px 1px 0 #ffffff,
+    inset -2px -2px 0 #808080,
+    inset 2px 2px 0 #dfdfdf;
+}

@@ -1,0 +1,8 @@
+{
+  "name": "Remix Irregular Grid Generator \u0026 Algorithmic Studio",
+  "description": "Interactive website grid generator and algorithmic explorer based on Gorilla Sun\u0027s irregular grid packing algorithm with step-by-step playback, CSS Grid export, and responsive website layouts.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
